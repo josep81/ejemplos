@@ -1,0 +1,62 @@
+pipeline {
+    agent any
+    stages {
+        stage('Hello') {
+            steps {
+                echo 'Hello World'
+                sh 'whoami'
+                echo 'Hello World'
+                sh 'whoami'
+                echo '================================================================================'
+                sh 'printenv'
+                echo '================================================================================'
+                echo sh(returnStdout: true, script: 'env')
+                echo '================================================================================'
+                echo checkOs()
+                try{
+                    script {
+                        figlet 'isUnix())'
+                        if ( isUnix() ) {
+                            sh 'env'
+                        }
+                        else {
+                            echo "Not in Linux" // bat set
+                        }
+                    }
+                } catch (Exception e) {
+                        echo 'Exception occurred: ' + e.toString()
+                        sh 'Handle the exception!'
+                }
+            }
+        }
+        stage('docker ps') {
+            steps {
+                script {
+                    try {
+                        figlet "try DOCKER"
+                        sh 'docker ps'
+                    } catch (Exception e) {
+                        echo 'Exception occurred: ' + e.toString()
+                        sh 'Handle the exception!'
+                        }
+                    }
+            }
+        }
+    }
+}
+
+def checkOs(){
+    if (isUnix()) {
+        def uname = sh script: 'uname', returnStdout: true
+        if (uname.startsWith("Darwin")) {
+            return "Macos"
+        }
+        // Optionally add 'else if' for other Unix OS  
+        else {
+            return "Linux"
+        }
+    }
+    else {
+        return "Windows"
+    }
+}
