@@ -1,0 +1,6 @@
+/* 
+# SMACSS State
+* Style rules for different states of a component.
+* For example a message toast component could be in a successful or unsuccessful state.
+* States are similar to modifiers in the BEM methodology.
+*/
