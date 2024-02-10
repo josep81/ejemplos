@@ -1,0 +1,90 @@
+// Scripted Pipeline to load a Declarative Pipeline from a Git repository
+
+// References
+// https://github.com/muratdemiray/jenkins-pipeline-load-generic
+// https://gist.github.com/medguywalker/e2beac3b352b0cd939f7c7b4c95a7b08
+
+// Variables
+// ----------------------
+use_curl       = true
+pipeline_raw   = 'https://raw.githubusercontent.com/josep81/ejemplos/main/Jenkins/Pipeline/basic_docker_run.jenkinsfile'
+option_cleanws = true
+use_github_checkout = true
+github_org          = 'josep81'
+github_repo         = 'ejemplos'
+github_source       = 'main'
+pipeline_file_path  = 'Jenkins/Pipeline/basic_docker_run.jenkinsfile'
+credentials_id  = ''
+jenkins_node    = ''
+
+// Function(s)
+// ----------------------
+def handleCheckout = {
+  
+  def regGithubSource    = ~/^v[\d|.]+/
+  is_tag = regGithubSource.matcher(github_source).matches()
+  if (is_tag == true) {
+    gitref = 'refs/tags/'
+  } else {
+    gitref = 'refs/heads/'
+  }
+  
+  checkout([ 
+    $class: 'GitSCM',
+    branches: [[name: gitref + github_source]], 
+    doGenerateSubmoduleConfigurations: false, 
+    extensions: [
+      [
+        $class: 'CloneOption',
+        noTags: false,
+        shallow: false,
+        depth: 0,
+        reference: ''
+      ],
+      [ 
+        $class: 'SubmoduleOption', 
+        depth: 1, 
+        disableSubmodules: false, 
+        parentCredentials: true, 
+        recursiveSubmodules: true, 
+        reference: '', 
+        shallow: true, 
+        trackingSubmodules: false
+      ], 
+      [$class: 'GitLFSPull']
+    ], 
+    submoduleCfg: [], 
+    userRemoteConfigs: [[ credentialsId: credentials_id, url: 'https://github.com/' + github_org + '/' + github_repo + '.git']]
+  ]);
+}
+
+// Scripted Pipeline
+// ----------------------
+node (jenkins_node) {
+    stage('Get the Pipeline from a Git repository') {
+        if (option_cleanws) {
+            sh 'ls -la'
+            cleanWs()
+        }
+        if (use_curl && pipeline_raw){
+            echo ' -> curl & load'
+            echo 'curl ${pipeline_raw} > savedFile.txt'
+            sh "curl $pipeline_raw > curl.jenkinsfile"
+            sh 'ls -la'
+            sh 'cat curl.jenkinsfile'
+            // Load Declarative Pipeline
+            load 'curl.jenkinsfile'  
+        } else if (use_github_checkout && pipeline_file_path ) {
+            echo ' -> handleCheckout & load'
+            handleCheckout()
+            // Load Declarative Pipeline
+            load pipeline_file_path  
+        } else {
+            echo 'Nothing to do.'
+        }
+        if (option_cleanws) {
+            sh 'ls -la'
+            cleanWs()
+        }
+    }
+}
