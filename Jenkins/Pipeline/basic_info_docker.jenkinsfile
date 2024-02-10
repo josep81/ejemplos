@@ -13,19 +13,19 @@ pipeline {
                 echo sh(returnStdout: true, script: 'env')
                 echo '================================================================================'
                 echo checkOs()
-                try{
-                    script {
-                        figlet 'isUnix())'
-                        if ( isUnix() ) {
-                            sh 'env'
-                        }
-                        else {
-                            echo "Not in Linux" // bat set
-                        }
+                script {
+                    try{
+                            figlet 'isUnix())'
+                            if ( isUnix() ) {
+                                sh 'env'
+                            }
+                            else {
+                                echo "Not in Linux" // bat set
+                            }
+                    } catch (Exception e) {
+                            echo 'Exception occurred: ' + e.toString()
+                            sh 'Handle the exception!'
                     }
-                } catch (Exception e) {
-                        echo 'Exception occurred: ' + e.toString()
-                        sh 'Handle the exception!'
                 }
             }
         }
