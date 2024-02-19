@@ -56,12 +56,12 @@
 ```
 > Primer párrafo
 
-> Primer párrafo
+> Segundo párrafo
 ```
 
 > Primer párrafo
 >
->Primer párrafo
+> Segundo párrafo
 
 
 ## Listas
