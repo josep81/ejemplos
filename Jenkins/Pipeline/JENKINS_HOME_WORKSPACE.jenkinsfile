@@ -1,0 +1,38 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('JENKINS_HOME') {
+            steps {
+                echo JENKINS_HOME
+                echo "JENKINS_HOME $JENKINS_HOME"
+                echo "JENKINS_HOME ${JENKINS_HOME}"
+            }
+        }
+        stage('BUILD_NUMBER') {
+            steps {
+                echo '$BUILD_NUMBER'
+                echo "$BUILD_NUMBER"
+                echo BUILD_NUMBER
+            }
+        }
+        stage('WORKSPACE') {
+            steps {
+                echo 'WORKSPACE'
+                echo WORKSPACE
+            }
+        }
+        stage('WORKSPACE_TMP') {
+            steps {
+                // echo 'WORKSPACE_TMP'
+                echo WORKSPACE_TMP
+            }
+        }
+        // stage('printenv') {
+        //     steps {
+        //         echo "sh 'printenv"
+        //         sh 'printenv'
+        //     }
+        // }
+    }
+}
